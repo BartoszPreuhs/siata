@@ -93,10 +93,37 @@ body {
 		<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
 <link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
 <script>
+// Warn when the browser renders WebGL on the CPU (hardware acceleration off):
+// the game can't run smoothly that way, and it's a browser setting.
+window.addEventListener('DOMContentLoaded', function () {
+  let renderer = '';
+  try {
+    const gl = document.createElement('canvas').getContext('webgl2');
+    if (!gl) renderer = 'none';
+    else {
+      const ext = gl.getExtension('WEBGL_debug_renderer_info');
+      renderer = String(gl.getParameter(ext ? ext.UNMASKED_RENDERER_WEBGL : gl.RENDERER));
+    }
+  } catch (e) { return; }
+  if (!/swiftshader|llvmpipe|software|basic render|none/i.test(renderer)) return;
+  const b = document.createElement('div');
+  b.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;padding:10px 40px 10px 14px;' +
+    'background:#e5484d;color:#fff;font:600 15px/1.4 system-ui,sans-serif;text-align:center';
+  b.textContent = 'Your browser is drawing the game without your graphics card, so it will be very slow. ' +
+    'Turn on "Use graphics acceleration when available" in your browser settings (System) and restart the browser.';
+  const x = document.createElement('span');
+  x.textContent = '\u2715';
+  x.style.cssText = 'position:absolute;right:14px;top:8px;cursor:pointer;font-size:18px';
+  x.onclick = function () { b.remove(); };
+  b.appendChild(x);
+  document.body.appendChild(b);
+});
+</script>
+<script>
 // index.pck is stored as parts (GitHub's 100 MB file limit); stream them back
 // together whenever the engine asks for index.pck.
 (function () {
-  const PARTS = ["index-5c45c21a8c.pck.part0", "index-5c45c21a8c.pck.part1", "index-5c45c21a8c.pck.part2"], SIZE = 120275028;
+  const PARTS = ["index-80f7c5d189.pck.part0", "index-80f7c5d189.pck.part1", "index-80f7c5d189.pck.part2"], SIZE = 120277236;
   const realFetch = window.fetch.bind(window);
   window.fetch = function (input, init) {
     const url = typeof input === 'string' ? input : (input && input.url) || '';
@@ -141,7 +168,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args": [], "canvasResizePolicy": 2, "emscriptenPoolSize": 8, "ensureCrossOriginIsolationHeaders": false, "executable": "index", "experimentalVK": false, "fileSizes": {"index.pck": 120275028, "index.wasm": 39513091}, "focusCanvas": true, "gdextensionLibs": [], "godotPoolSize": 4};
+const GODOT_CONFIG = {"args": [], "canvasResizePolicy": 2, "emscriptenPoolSize": 8, "ensureCrossOriginIsolationHeaders": false, "executable": "index", "experimentalVK": false, "fileSizes": {"index.pck": 120277236, "index.wasm": 39513091}, "focusCanvas": true, "gdextensionLibs": [], "godotPoolSize": 4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
