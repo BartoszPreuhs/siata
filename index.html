@@ -96,7 +96,7 @@ body {
 // index.pck is stored as parts (GitHub's 100 MB file limit); stream them back
 // together whenever the engine asks for index.pck.
 (function () {
-  const PARTS = ["index.pck.part0", "index.pck.part1", "index.pck.part2"], SIZE = 120269300;
+  const PARTS = ["index-5c45c21a8c.pck.part0", "index-5c45c21a8c.pck.part1", "index-5c45c21a8c.pck.part2"], SIZE = 120275028;
   const realFetch = window.fetch.bind(window);
   window.fetch = function (input, init) {
     const url = typeof input === 'string' ? input : (input && input.url) || '';
@@ -141,8 +141,8 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args": [], "canvasResizePolicy": 2, "emscriptenPoolSize": 8, "ensureCrossOriginIsolationHeaders": true, "executable": "index", "experimentalVK": false, "fileSizes": {"index.pck": 120269300, "index.wasm": 38817643}, "focusCanvas": true, "gdextensionLibs": [], "godotPoolSize": 4, "serviceWorker": "index.service.worker.js"};
-const GODOT_THREADS_ENABLED = true;
+const GODOT_CONFIG = {"args": [], "canvasResizePolicy": 2, "emscriptenPoolSize": 8, "ensureCrossOriginIsolationHeaders": false, "executable": "index", "experimentalVK": false, "fileSizes": {"index.pck": 120275028, "index.wasm": 39513091}, "focusCanvas": true, "gdextensionLibs": [], "godotPoolSize": 4};
+const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
 (function () {
