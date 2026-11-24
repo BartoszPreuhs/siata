@@ -93,6 +93,20 @@ body {
 		<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
 <link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
 <script>
+// On high-DPI screens the engine renders at devicePixelRatio x the window size
+// (2-4x the pixels of a 1080p screen). Cap the drawn pixels at about 1080p; the
+// browser scales the picture up, which costs nothing.
+(function () {
+  const real = window.devicePixelRatio || 1;
+  try {
+    Object.defineProperty(window, 'devicePixelRatio', { configurable: true, get: function () {
+      const css = Math.max(1, window.innerWidth * window.innerHeight);
+      return Math.max(0.75, Math.min(real, Math.sqrt(1920 * 1080 / css)));
+    } });
+  } catch (e) {}
+})();
+</script>
+<script>
 // Warn when the browser renders WebGL on the CPU (hardware acceleration off):
 // the game can't run smoothly that way, and it's a browser setting.
 window.addEventListener('DOMContentLoaded', function () {
@@ -123,7 +137,7 @@ window.addEventListener('DOMContentLoaded', function () {
 // index.pck is stored as parts (GitHub's 100 MB file limit); stream them back
 // together whenever the engine asks for index.pck.
 (function () {
-  const PARTS = ["index-80f7c5d189.pck.part0", "index-80f7c5d189.pck.part1", "index-80f7c5d189.pck.part2"], SIZE = 120277236;
+  const PARTS = ["index-f50d912bad.pck.part0", "index-f50d912bad.pck.part1", "index-f50d912bad.pck.part2"], SIZE = 120278804;
   const realFetch = window.fetch.bind(window);
   window.fetch = function (input, init) {
     const url = typeof input === 'string' ? input : (input && input.url) || '';
@@ -135,7 +149,17 @@ window.addEventListener('DOMContentLoaded', function () {
           if (!reader) {
             if (i >= PARTS.length) { ctrl.close(); return; }
             const r = await realFetch(PARTS[i++]);
-            if (!r.ok) { ctrl.error(new Error('missing ' + PARTS[i - 1])); return; }
+            if (!r.ok) {
+              // This page is an older cached copy whose parts were replaced by
+              // an update: load the current page once, bypassing the cache.
+              if (!sessionStorage.getItem('jv-fresh')) {
+                sessionStorage.setItem('jv-fresh', '1');
+                const q = new URLSearchParams(location.search); q.set('v', Date.now());
+                location.replace(location.pathname + '?' + q.toString());
+              }
+              ctrl.error(new Error('missing ' + PARTS[i - 1])); return;
+            }
+            sessionStorage.removeItem('jv-fresh');
             reader = r.body.getReader();
           }
           const { done, value } = await reader.read();
@@ -168,7 +192,7 @@ window.addEventListener('DOMContentLoaded', function () {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args": [], "canvasResizePolicy": 2, "emscriptenPoolSize": 8, "ensureCrossOriginIsolationHeaders": false, "executable": "index", "experimentalVK": false, "fileSizes": {"index.pck": 120277236, "index.wasm": 39513091}, "focusCanvas": true, "gdextensionLibs": [], "godotPoolSize": 4};
+const GODOT_CONFIG = {"args": [], "canvasResizePolicy": 2, "emscriptenPoolSize": 8, "ensureCrossOriginIsolationHeaders": false, "executable": "index", "experimentalVK": false, "fileSizes": {"index.pck": 120278804, "index.wasm": 39513091}, "focusCanvas": true, "gdextensionLibs": [], "godotPoolSize": 4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
