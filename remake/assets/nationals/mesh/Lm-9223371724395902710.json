@@ -1,0 +1,1 @@
+{"aabb":[-0.565896332263947,-0.562139451503754,0.0,1.13179266452789,1.12427890300751,0.694474756717682],"class":"ArrayMesh","path":"","shape_mode":1,"shape_names":[],"surfaces":[{"idx":{"comps":1,"kind":"i32","len":5400,"off":5120},"mat":null,"mat_name":"","pos":{"comps":3,"kind":"f32","len":3072,"off":0},"prim":3,"uv":{"comps":2,"kind":"f32","len":2048,"off":3072}}]}
